@@ -22,7 +22,6 @@ function [x, itr_x, itr_y] = SimAnn(fun, x0, kmax, T)
     end
 
     %% Iterations initializing
-    itr_x = 0;
     itr_y = 0;
     i = 1; % Number of acceptances
 
@@ -61,13 +60,16 @@ function [x, itr_x, itr_y] = SimAnn(fun, x0, kmax, T)
             end
         end
 
-        if rand<acp && abs(x) ~= Inf
+        if rand<acp && min(abs(x) ~= Inf)
             x = x_n;
-            itr_x(i) = x;   % Log x iteration
+            for j=1:length(x)
+                itr_x{i,j} = x(j);   % Log x iteration
+            end
             e = e_n;
             itr_y(i) = e;   % Log y iteration
 
             i = i + 1;      % Increase number of acceptances 
         end
     end
+    itr_x = cell2mat(itr_x);
 end
