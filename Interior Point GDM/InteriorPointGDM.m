@@ -39,32 +39,16 @@ for k = 1:nc
 end
 
 while t > eps
-    obj = [fx - t*phi];
-    grad = [gradient(obj)]; 
+    obj = fx - t*phi;
+    grad = gradient(obj); 
     for k = 1:kmax 
-        su = grad;
-        for i = 1:nx
-            su = subs(su,vp(i),xx(i)); % !!! tu je problem
-        end
-        dx = -real(double(su)); 
+        dx = -real(double(subs(grad,vp',xx))); 
         if norm(dx)<eps, break, end 
-        su1 = obj;
-        su2 = obj;
-        for i = 1:nx
-            su1 = subs(su1,vp(i),xx(i)+tbt*dx(i));
-            su2 = subs(su2,vp(i),xx(i));
-        end
-        a = su1;
-        b = su2;
+        a = subs(obj,vp',xx+tbt*dx);
+        b = subs(obj,vp',xx);
         while real(double(a))>real(double(b))+alpha*tbt*-dx'*dx 
-            su1 = obj;
-            su2 = obj;
-            for i = 1:nx
-                su1 = subs(su1,vp(i),xx(i)+tbt*dx(i));
-                su2 = subs(su2,vp(i),xx(i));
-            end
-            a = su1;
-            b = su2;
+            a = subs(obj,vp',xx+tbt*dx);
+            b = subs(obj,vp',xx);
             tbt = beta*tbt;
         end 
         xx = xx + tbt*dx; 
